@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+	<style type="text/css">
+		html, body{
+			/*width: 100%;*/
+			height: 100%;
+			margin-bottom: 0;
+			margin-top: 0;
+		}
+		#head_tags{
+			font-size: 1.5em;
+			margin: 1%;
+		}
+		#container{
+			display: block;
+			/*width: 100%;*/
+			min-height: 200px;
+			max-height: 400px;
+			/*align-items: flex-start;*/
+			/*justify-content: center;*/
+			margin-top: 2%;
+			text-align: right;
+			background-color: grey;
+			background-image: url("{{ content.media.url }}");
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			border-radius: 30px;
+			padding: 2%;
+		}
+		#container img{
+			min-width: 20%;
+			max-height: 350px;
+			border-radius: 10px;
+			margin-right: 5%;
+			box-shadow: 0px 0px 20px black;
+		}
+		#container > div{
+			display: inline-block;
+			width: 50%;
+			text-align: left;
+			vertical-align: top;
+			/*display: flex;*/
+			/*align-items: center;*/
+			/*justify-content: center;*/
+			/*text-align: center;*/
+		}
+		#tag_input{
+			width: 70%;
+			display: inline-block;
+			overflow-wrap: anywhere;
+			/*width: max-content;*/
+			margin-right: 5%;
+			text-align: left;
+		}
+		#tag_input input{
+			width: 100%;
+			height: 30px;
+			/*padding: 4%;*/
+			border: none;
+			font-size: 1.2em;
+			border-radius: 30px;
+			outline: none;
+		}
+		.tags{
+			display: inline-block;
+			padding: 2%;
+			clear: both;
+			font-size: 1.4em;
+			border-radius: 10px;
+			background-color: #efc600;
+			margin: 2%;
+			cursor: pointer;
+			transition: 0.2s;
+		}
+		.tags:hover{
+			background-color: darkred;
+		}
+		button{
+			min-width: max-content;
+			width: 20%;
+			font-size: 2em;
+			vertical-align: top;
+			border-radius: 30px;
+			font-weight: bold;
+			border: none;
+			/*padding: 2%;*/
+			/*padding-left: 50%;*/
+			/*padding-right: 50%;*/
+			transition: 0.2s;
+			cursor: pointer;
+			outline: none;
+		}
+		button:hover{
+			background-color: black;
+			color: white;
+		}
+		/*Mobile View*/
+		@media only screen and (max-width: 720px){
+			/*body{
+				background-image: url("{{ content.media.url }}");
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: cover;
+				ba
+			}*/
+			#container{
+				text-align: center;
+				/*flex-direction: column;*/
+				/*align-items: center;*/
+				background-image: none;
+				background-color: transparent;
+			}
+			#container img{
+				width: 50vw;
+				margin-right:0;
+				margin-bottom: 5%;
+			}
+			#container > div{
+				display: block;
+				width: 100%;
+				text-align: center;
+			}
+		}
+	</style>
+{% endblock %}
+
+{% block header_content %}
+	<p id="head_tags" >
+		Add Tags
+	</p>
+{% endblock %}
+
+{% block content %}
+	<span id="token">
+		{% csrf_token %}
+	</span>
+	<div id="container">
+		<img src="{{content.media.url}}">
+		<div>
+			<div id="tag_input">
+				<input id="tag" type="text" name="Tags" onkeydown="check(event, this)">
+			</div>
+			<a onclick="submit(this)">
+				<button value="Add">
+					&#8680;
+				</button>
+			</a>
+		</div>
+	</div>
+	<script type="text/javascript">
+ 		tag = "";
+ 		function check(e,el){
+ 			var key = e.keyCode ? e.keyCode : e.which;
+ 			if(key==13 && el.value.length>0){
+ 				$("#tag_input").append("<div title=\"remove\" class=\"tags\" onclick=\"delete_tag(this)\">"+el.value+"</div>");
+ 				el.value = "";
+ 			}
+ 		}
+ 		function delete_tag(el){
+ 			el.remove();
+ 		}
+		function submit(el){
+			all_tags = document.getElementsByClassName('tags');
+			if (all_tags.length <= 0) {
+				alert("enter a tag");
+				return false;
+			}
+			for (var i = 0; i < all_tags.length; i++) {
+				tag = tag + all_tags[i].innerHTML + ";";
+				console.log(tag);
+			}
+			$.post("{% url 'home:upload_tags' content.id%}", {
+				csrfmiddlewaretoken : document.querySelector('#token input').value,
+				tags : tag
+			}).fail(function(data){
+				alert("Failed");
+				console.log(data)
+				return false;
+			});
+			console.log("done");
+			window.location.href='{% url 'home:home' %}';
+		}
+		document.onreadystatechange = function() { 
+		    if (document.readyState !== "complete") { 
+		        document.body.style.visibility = "hidden";
+		        document.body.style.overflow = "hidden"; 
+		        document.querySelector("#loader").style.visibility = "visible";
+		      } else { 
+		        document.querySelector("#loader").style.display = "none"; 
+		        document.body.style.visibility = "visible"; 
+		        document.body.style.overflow = "auto";
+		    } 
+		};
+		function menu(el){
+			if (el.className=="close") {
+				// el.style.bottom = "30%";
+				// el.style.transform = "rotate(180deg)";
+				var up = document.getElementById('up');
+				up.style.transform = "rotateZ(45deg)";
+				up.style.marginTop = "36%";
+				var mid = document.getElementById('mid');
+				mid.style.opacity = "0";
+				var down = document.getElementById('down');
+				down.style.transform = "rotateZ(-45deg)";
+				down.style.marginTop = "-36%";
+				document.getElementById("expage_back").style.transition = "opacity 0.2s";
+				document.getElementById('expage_back').style.opacity = "1";
+				document.getElementById('expage_back').style.zIndex = "9";
+				// document.body.style.overflow = "hidden";
+				document.getElementById('expage_back').addEventListener("click", function(){
+					if (el.className=="open") {
+						menu(document.getElementById('explore'));
+					}
+				})
+				el.className = "open";
+				el.style.zIndex = 10;
+				document.getElementById('expage').style.transition = "opacity 0.2s";
+				document.getElementById('expage').style.opacity = "1";
+				document.getElementById('expage').style.zIndex = "10";
+			}
+			else{
+				// el.style.bottom = "16%";
+				// el.style.transform = "rotate(0deg)";
+				var up = document.getElementById('up');
+				up.style.transform = "rotateZ(0deg)";
+				up.style.marginTop = "12%";
+				var mid = document.getElementById('mid');
+				mid.style.opacity = "1";
+				var down = document.getElementById('down');
+				down.style.transform = "rotateZ(0deg)";
+				down.style.marginTop = "12%";
+				el.className = "close";	
+				// document.body.style.overflow = "auto";
+				document.getElementById('expage_back').style.transition = "opacity 0.2s, z-index 0s 0.2s";
+				document.getElementById('expage_back').style.opacity = "0";	
+				document.getElementById('expage_back').style.zIndex = "-9";
+				document.getElementById('expage').style.transition = "opacity 0.2s, z-index 0s 0.2s";
+				document.getElementById('expage').style.opacity = "0";	
+				document.getElementById('expage').style.zIndex = "-10";
+			}
+
+		}
+	</script>
+{% endblock %}

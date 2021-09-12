@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block head %}
+	<style type="text/css">
+		#head_login{
+			font-size: 1.5em;
+			margin: 1%;
+		}
+		form{
+			display: flex;
+			width: 100%;
+			/*justify-content: */
+			/*flex-wrap: wrap;*/
+			flex-direction: column;
+			align-items: center;
+			margin-top: 5%;
+			font-size: 1.5em;
+		}
+		form div{
+			/*transform: scale(1.5);*/
+			text-align: center;
+		}
+		form div > p{
+			/*max-width: 95vw;*/
+			color: white;
+			text-align: center;
+			max-width: 100vw;
+			/*margin: 0;*/
+		}
+		form input{
+			color: white;
+			background-color: #555555;
+			max-width: 95%;
+			border-radius: 5px;
+			border:none;
+			font-size: 1.2em;
+			/*padding-left: 2%;*/
+		}
+		form input:focus{
+			border:none;
+			outline: none;
+			box-shadow: 10px 10px 10px black;
+			transition: 0.2s;
+		}
+		form input::placeholder{
+			color: black;
+		}
+		#submit{
+			box-shadow: 5px 5px 5px black;
+			color: black;
+			background-color: #efc600;
+			/*color: white;*/
+			border-radius: 20px;
+			padding: 1%;
+			cursor: pointer;
+			/*transform: scale(1.5);*/
+		}
+		.errorlist{
+			color: #999;
+		}
+	</style>
+{% endblock %}
+
+{% block header_content %}
+	<p id="head_login">
+		LOGIN
+	</p>
+{% endblock %}
+
+{% block content %}
+	<form action="" method="post">
+		<div>
+			{{ form.non_field_errors }}
+			<p>
+				<input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username" placeholder="Username">
+			</p>
+			<p>
+				<input type="password" name="password" autocomplete="current-password" required="" id="id_password" placeholder="Password">
+			</p>
+			{% csrf_token %}
+			<input id="submit" type="submit" name="Login">
+		</div>
+	</form>
+	<script type="text/javascript">
+		document.onreadystatechange = function() { 
+		    if (document.readyState !== "complete") { 
+		        document.body.style.visibility = "hidden";
+		        document.body.style.overflow = "hidden"; 
+		        document.querySelector("#loader").style.visibility = "visible";
+		      } else { 
+		        document.querySelector("#loader").style.display = "none"; 
+		        document.body.style.visibility = "visible"; 
+		        document.body.style.overflow = "auto";
+		    } 
+		};
+		function menu(el){
+			if (el.className=="close") {
+				// el.style.bottom = "30%";
+				// el.style.transform = "rotate(180deg)";
+				var up = document.getElementById('up');
+				up.style.transform = "rotateZ(45deg)";
+				up.style.marginTop = "36%";
+				var mid = document.getElementById('mid');
+				mid.style.opacity = "0";
+				var down = document.getElementById('down');
+				down.style.transform = "rotateZ(-45deg)";
+				down.style.marginTop = "-36%";
+				document.getElementById("expage_back").style.transition = "opacity 0.2s";
+				document.getElementById('expage_back').style.opacity = "1";
+				document.getElementById('expage_back').style.zIndex = "9";
+				// document.body.style.overflow = "hidden";
+				document.getElementById('expage_back').addEventListener("click", function(){
+					if (el.className=="open") {
+						menu(document.getElementById('explore'));
+					}
+				})
+				el.className = "open";
+				el.style.zIndex = 10;
+				document.getElementById('expage').style.transition = "opacity 0.2s";
+				document.getElementById('expage').style.opacity = "1";
+				document.getElementById('expage').style.zIndex = "10";
+			}
+			else{
+				// el.style.bottom = "16%";
+				// el.style.transform = "rotate(0deg)";
+				var up = document.getElementById('up');
+				up.style.transform = "rotateZ(0deg)";
+				up.style.marginTop = "12%";
+				var mid = document.getElementById('mid');
+				mid.style.opacity = "1";
+				var down = document.getElementById('down');
+				down.style.transform = "rotateZ(0deg)";
+				down.style.marginTop = "12%";
+				el.className = "close";	
+				// document.body.style.overflow = "auto";
+				document.getElementById('expage_back').style.transition = "opacity 0.2s, z-index 0s 0.2s";
+				document.getElementById('expage_back').style.opacity = "0";	
+				document.getElementById('expage_back').style.zIndex = "-9";
+				document.getElementById('expage').style.transition = "opacity 0.2s, z-index 0s 0.2s";
+				document.getElementById('expage').style.opacity = "0";	
+				document.getElementById('expage').style.zIndex = "-10";
+			}
+
+		}
+	</script>
+{% endblock %}

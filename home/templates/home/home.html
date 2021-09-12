@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<script defer type="text/javascript" src ="{% static 'home/home.js' %}"></script>
+{% endblock %}
+
+{% block header_content %}
+	<div id="search_div">
+		<div id="search_img">
+			<img src="{% static 'home/logo.png' %}">
+		</div>
+		<div id="search" >
+				<input id="search_bar" type="text" name="search" onkeypress="check(event, this)" placeholder="Search for GIFs" autocomplete="off">
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div id="catagory">
+		<h4>Trending GIFs</h4>
+		<div>
+			{% for trend in trends %}
+				<div id="col" onclick="srch(this)" >{{ trend.tag.name }}</div>
+			{% endfor %}
+		</div>
+	</div>
+	<div id="content">
+		<div>
+			<p></p>
+		</div>
+		<div>
+			
+		</div>
+	</div>
+	<div id="gif_view" class="gif_view--hidden">
+		<div id="close_gif_view">
+			<div></div><div></div><div></div>
+		</div>
+		<div id="gif_content">
+		</div>
+		<div id="gif_related">
+			<h3>Related GIFs</h3>
+		</div>
+	</div>
+	<p id="lastP">
+			YAY! You have seen it all.
+	</p>
+	<span id="content_loader"></span>
+{% endblock %}
