@@ -81,13 +81,15 @@ class search(View):
         else:
             tags = Tag.objects.none()
             content_set = set()
+            prev_content_set = set()
             content_count = 0
             for tag in tg.split():
                 tags = Tag.objects.filter(name__startswith=tag)
                 for tag in tags:
                     content_set_len = len(content_set)
                     content = tag.content.all().values_list("id", flat=True)[:count+15]
-                    content_count = content_count + content.count()
+                    prev_content_set.update(content)
+                    content_count = len(prev_content_set)
                     if content_count > count:
                         start_index = 0
                         end_index = 15 - content_set_len
